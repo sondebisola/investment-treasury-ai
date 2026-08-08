@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_trade_executions
+    description: "Standardized staging layer for trade executions"
+    columns:
+      - name: trade_id
+        description: "Primary key for trades"
+        tests:
+          - unique
+          - not_null
+      - name: liquidity_tier
+        description: "Liquidity classification tier"
+        tests:
+          - accepted_values:
+              values: ['TIER_1_HIGH', 'TIER_2_MEDIUM', 'TIER_3_LOW']
+
+  - name: fct_liquidity_summary
+    description: "Aggregated liquidity exposure by asset class and tier"
+    columns:
+      - name: asset_class
+        tests:
+          - not_null
+      - name: total_notional_exposure
+        tests:
+          - not_null

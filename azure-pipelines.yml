@@ -1,0 +1,45 @@
+trigger:
+  - main
+
+pr:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - name: PYTHON_VERSION
+    value: '3.11'
+
+stages:
+  - stage: ValidateAndTest
+    displayName: '1. Validation & Quality Checks'
+    jobs:
+      - job: QualityAssurance
+        displayName: 'Run dbt & AST Parser Tests'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(PYTHON_VERSION)'
+            displayName: 'Set Python Version'
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            displayName: 'Install Dependencies'
+
+          - script: |
+              python -c "from agent_core.validators.sql_parser import validate_sql_ast; ok, _ = validate_sql_ast('SELECT * FROM fct_liquidity_summary'); assert ok"
+            displayName: 'Validate SQL AST Parser'
+
+  - stage: Infrastructure
+    displayName: '2. Terraform IaC Checks'
+    dependsOn: ValidateAndTest
+    jobs:
+      - job: TerraformPlan
+        displayName: 'Terraform Init & Format'
+        steps:
+          - script: |
+              sudo apt-get update && sudo apt-get install -y terraform
+              terraform fmt -check terraform/
+            displayName: 'Verify Terraform Formatting'

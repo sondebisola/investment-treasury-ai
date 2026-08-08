@@ -1,0 +1,53 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Python compiled files & caches
+__pycache__/
+*.pyc
+*.pyo
+
+# dbt artifacts & logs
+dbt_treasury/target/
+dbt_treasury/dbt_packages/
+dbt_treasury/logs/
+
+# Environment secrets
+.env
+EOTcat <<EOT >> .gitignore
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Python compiled files & caches
+__pycache__/
+*.pyc
+*.pyo
+
+# dbt artifacts & logs
+dbt_treasury/target/
+dbt_treasury/dbt_packages/
+dbt_treasury/logs/
+
+# Environment secrets
+.env
+
+# Python Compiled Caches
+__pycache__/
+*.pyc
+
+# dbt Run Artifacts
+dbt_treasury/target/
+dbt_treasury/logs/
+logs/
+
+# Python Compiled Caches
+__pycache__/
+*.pyc
+
+# dbt Run Artifacts
+dbt_treasury/target/
+dbt_treasury/logs/
+logs/

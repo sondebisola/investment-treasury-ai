@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: raw_treasury
+    description: "Raw financial trade execution streams"
+    tables:
+      - name: raw_trade_executions
+        description: "Un-transformed trade records"
