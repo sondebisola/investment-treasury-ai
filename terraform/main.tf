@@ -1,6 +1,13 @@
-
 terraform {
   required_version = ">= 1.5.0"
+
+  # 1. Remote GCS Backend for state locking
+  backend "gcs" {
+    bucket = "investment-treasury-ai-tfstate"
+    prefix = "terraform/state"
+  }
+
+  # 2. Provider requirements
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -14,6 +21,7 @@ provider "google" {
   region  = var.region
 }
 
+# Variable Definitions
 variable "project_id" {
   type        = string
   description = "The GCP Project ID"
@@ -52,21 +60,4 @@ resource "google_project_iam_member" "bq_job_user" {
   project = var.project_id
   role    = "roles/bigquery.jobUser"
   member  = "serviceAccount:${google_service_account.agent_sa.email}"
-}
-
-
-terraform {
-  
-  # Remote GCS Backend for CI/CD state locking
-  backend "gcs" {
-    bucket = "investment-treasury-ai-tfstate"  # Your GCP GCS bucket
-    prefix = "terraform/state"
-  }
-
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 5.0"
-    }
-  }
 }
