@@ -1,3 +1,4 @@
+
 terraform {
   required_version = ">= 1.5.0"
   required_providers {
@@ -51,4 +52,21 @@ resource "google_project_iam_member" "bq_job_user" {
   project = var.project_id
   role    = "roles/bigquery.jobUser"
   member  = "serviceAccount:${google_service_account.agent_sa.email}"
+}
+
+
+terraform {
+  
+  # Remote GCS Backend for CI/CD state locking
+  backend "gcs" {
+    bucket = "investment-treasury-ai-tfstate"  # Your GCP GCS bucket
+    prefix = "terraform/state"
+  }
+
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
+    }
+  }
 }
