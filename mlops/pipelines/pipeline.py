@@ -111,7 +111,7 @@ def treasury_training_pipeline(
         min_ast_pass_threshold=0.90
     )
 
-    with dsl.Condition(eval_task.output == True, name="benchmark-passed-gate"):
+    with dsl.Condition(eval_task.outputs['Output'] == True, name="benchmark-passed-gate"):
         deploy_canary_gate_op(
             model_adapter=train_task.outputs["model_adapter"],
             traffic_percentage=10
