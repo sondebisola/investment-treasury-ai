@@ -1,3 +1,4 @@
+ HEAD
 # Virtual Environments
 venv/
 .venv/
@@ -56,3 +57,8 @@ logs/
 terraform/.terraform/
 *.tfstate
 *.tfstate.backup
+=======
+treasury_pipeline.yaml
+__pycache__/
+.pytest_cache/
+d79670e (feat(mlops): implement Kubeflow v2 LoRA fine-tuning and evaluation pipeline on Vertex AI)
