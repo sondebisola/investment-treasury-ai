@@ -4,7 +4,7 @@ from kfp.dsl import component, Input, Output, Dataset, Model, Metrics
 
 @component(
     base_image="python:3.11-slim",
-    packages_to_install=["pandas"]
+    packages_to_install=["pandas", "fsspec", "gcsfs"]
 )
 def prepare_dataset_op(
     raw_data_uri: str,
@@ -12,8 +12,7 @@ def prepare_dataset_op(
 ):
     """Ingest and prepare the training dataset."""
     import pandas as pd
-    from google.cloud import storage
-    df = pd.read_json(raw_data_uri, lines=True, storage_options={"token": "cloud"})
+    df = pd.read_json(raw_data_uri, lines=True)
     df.to_json(processed_dataset.path, orient="records", lines=True)
 
 
@@ -77,6 +76,7 @@ def benchmark_and_evaluate_op(
     ast_pass_rate = passed_ast / len(golden_test_cases)
     metrics.log_metric("ast_pass_rate", float(ast_pass_rate))
     metrics.log_metric("min_threshold", float(min_ast_pass_threshold))
+
     return bool(ast_pass_rate >= min_ast_pass_threshold)
 
 
@@ -111,8 +111,7 @@ def treasury_training_pipeline(
         min_ast_pass_threshold=0.90
     )
 
-    # Reference eval_task.outputs["Output"] instead of eval_task.output
-    with dsl.Condition(eval_task.outputs["Output"] == True, name="benchmark-passed-gate"):
+    with dsl.Condition(eval_task.output == True, name="benchmark-passed-gate"):
         deploy_canary_gate_op(
             model_adapter=train_task.outputs["model_adapter"],
             traffic_percentage=10
